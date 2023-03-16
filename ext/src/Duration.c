@@ -213,23 +213,41 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo__construct, 0, ZEND_RETURN_VALUE, 3)
   ZEND_ARG_INFO(0, nanos)
 ZEND_END_ARG_INFO()
 
+#if PHP_VERSION_ID >= 80200
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_tostring, 0, 0, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+#else
+#define arginfo_tostring arginfo_none
+#endif
+
 static zend_function_entry php_driver_duration_methods[] = {
   PHP_ME(Duration, __construct,  arginfo__construct, ZEND_ACC_PUBLIC | ZEND_ACC_CTOR)
   PHP_ME(Duration, type, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Duration, months, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Duration, days, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Duration, nanos, arginfo_none, ZEND_ACC_PUBLIC)
-  PHP_ME(Duration, __toString, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(Duration, __toString, arginfo_tostring, ZEND_ACC_PUBLIC)
   PHP_FE_END
 };
 
 static php_driver_value_handlers php_driver_duration_handlers;
 
 static HashTable *
-php_driver_duration_properties(zval *object TSRMLS_DC)
+php_driver_duration_properties(
+#if PHP_MAJOR_VERSION >= 8
+        zend_object *object
+#else
+        zval *object TSRMLS_DC
+#endif
+)
 {
   HashTable *props = zend_std_get_properties(object TSRMLS_CC);
+
+#if PHP_MAJOR_VERSION >= 8
+  php_driver_duration  *self = PHP5TO7_ZEND_OBJECT_GET(duration, object);
+#else
   php_driver_duration  *self = PHP_DRIVER_GET_DURATION(object);
+#endif
 
   php5to7_zval wrapped_months, wrapped_days, wrapped_nanos;
   PHP5TO7_ZVAL_MAYBE_MAKE(wrapped_months);
@@ -248,6 +266,9 @@ php_driver_duration_properties(zval *object TSRMLS_DC)
 static int
 php_driver_duration_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
+#if PHP_MAJOR_VERSION >= 8
+  ZEND_COMPARE_OBJECTS_FALLBACK(obj1, obj2);
+#endif
   php_driver_duration *left, *right;
 
   if (Z_OBJCE_P(obj1) != Z_OBJCE_P(obj2))
@@ -322,7 +343,11 @@ void php_driver_define_Duration(TSRMLS_D)
 
   memcpy(&php_driver_duration_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   php_driver_duration_handlers.std.get_properties  = php_driver_duration_properties;
+#if PHP_MAJOR_VERSION >= 8
+  php_driver_duration_handlers.std.compare = php_driver_duration_compare;
+#else
   php_driver_duration_handlers.std.compare_objects = php_driver_duration_compare;
+#endif
 
   php_driver_duration_handlers.hash_value = php_driver_duration_hash_value;
   php_driver_duration_handlers.std.clone_obj = NULL;

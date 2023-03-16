@@ -21,7 +21,7 @@ namespace Cassandra\Exception;
 /**
  * Cassandra runtime exception.
  */
-class RuntimeException extends \RuntimeException implements \Cassandra\Exception {
+class RuntimeException extends \RuntimeException implements Exception {
 
     /**
      * @param mixed $message

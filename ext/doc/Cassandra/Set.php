@@ -26,14 +26,14 @@ final class Set implements Value, \Countable, \Iterator {
     /**
      * Creates a new collection of a given type.
      *
-     * @param \Cassandra\Type $type
+     * @param Type $type
      */
     public function __construct($type) { }
 
     /**
      * The type of this set.
      *
-     * @return \Cassandra\Type
+     * @return Type
      */
     public function type() { }
 

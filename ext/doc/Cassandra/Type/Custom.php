@@ -21,7 +21,7 @@ namespace Cassandra\Type;
 /**
  * A class that represents a custom type.
  */
-final class Custom extends \Cassandra\Type {
+final class Custom extends Type {
 
     private function __construct() { }
 

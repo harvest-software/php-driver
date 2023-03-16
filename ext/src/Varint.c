@@ -350,9 +350,16 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_num, 0, ZEND_RETURN_VALUE, 1)
   ZEND_ARG_INFO(0, num)
 ZEND_END_ARG_INFO()
 
+#if PHP_VERSION_ID >= 80200
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_tostring, 0, 0, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+#else
+#define arginfo_tostring arginfo_none
+#endif
+
 static zend_function_entry php_driver_varint_methods[] = {
   PHP_ME(Varint, __construct, arginfo__construct, ZEND_ACC_CTOR|ZEND_ACC_PUBLIC)
-  PHP_ME(Varint, __toString, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(Varint, __toString, arginfo_tostring, ZEND_ACC_PUBLIC)
   PHP_ME(Varint, type, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Varint, value, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Varint, add, arginfo_num, ZEND_ACC_PUBLIC)
@@ -371,7 +378,14 @@ static zend_function_entry php_driver_varint_methods[] = {
 static php_driver_value_handlers php_driver_varint_handlers;
 
 static HashTable *
-php_driver_varint_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
+php_driver_varint_gc(
+#if PHP_MAJOR_VERSION >= 8
+        zend_object *object,
+#else
+        zval *object,
+#endif
+        php5to7_zval_gc table, int *n TSRMLS_DC
+)
 {
   *table = NULL;
   *n = 0;
@@ -379,14 +393,24 @@ php_driver_varint_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
 }
 
 static HashTable *
-php_driver_varint_properties(zval *object TSRMLS_DC)
+php_driver_varint_properties(
+#if PHP_MAJOR_VERSION >= 8
+        zend_object *object
+#else
+        zval *object TSRMLS_DC
+#endif
+)
 {
   char *string;
   int string_len;
   php5to7_zval type;
   php5to7_zval value;
 
+#if PHP_MAJOR_VERSION >= 8
+  php_driver_numeric *self = PHP5TO7_ZEND_OBJECT_GET(numeric, object);
+#else
   php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(object);
+#endif
   HashTable         *props = zend_std_get_properties(object TSRMLS_CC);
 
   php_driver_format_integer(self->data.varint.value, &string, &string_len);
@@ -405,6 +429,9 @@ php_driver_varint_properties(zval *object TSRMLS_DC)
 static int
 php_driver_varint_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
+#if PHP_MAJOR_VERSION >= 8
+  ZEND_COMPARE_OBJECTS_FALLBACK(obj1, obj2);
+#endif
   php_driver_numeric *varint1 = NULL;
   php_driver_numeric *varint2 = NULL;
 
@@ -425,9 +452,20 @@ php_driver_varint_hash_value(zval *obj TSRMLS_DC)
 }
 
 static int
-php_driver_varint_cast(zval *object, zval *retval, int type TSRMLS_DC)
+php_driver_varint_cast(
+#if PHP_MAJOR_VERSION >= 8
+        zend_object *object,
+#else
+        zval *object,
+#endif
+        zval *retval, int type TSRMLS_DC
+)
 {
+#if PHP_MAJOR_VERSION >= 8
+  php_driver_numeric *self = PHP5TO7_ZEND_OBJECT_GET(numeric, object);
+#else
   php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(object);
+#endif
 
   switch (type) {
   case IS_LONG:
@@ -480,7 +518,11 @@ void php_driver_define_Varint(TSRMLS_D)
 #if PHP_VERSION_ID >= 50400
   php_driver_varint_handlers.std.get_gc          = php_driver_varint_gc;
 #endif
+#if PHP_MAJOR_VERSION >= 8
+  php_driver_varint_handlers.std.compare = php_driver_varint_compare;
+#else
   php_driver_varint_handlers.std.compare_objects = php_driver_varint_compare;
+#endif
   php_driver_varint_handlers.std.cast_object = php_driver_varint_cast;
 
   php_driver_varint_handlers.hash_value = php_driver_varint_hash_value;

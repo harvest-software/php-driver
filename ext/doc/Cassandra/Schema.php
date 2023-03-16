@@ -28,7 +28,7 @@ interface Schema {
      *
      * @param string $name Name of the keyspace to get
      *
-     * @return \Cassandra\Keyspace Keyspace instance or null
+     * @return Keyspace Keyspace instance or null
      */
     public function keyspace($name);
 

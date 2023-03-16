@@ -34,7 +34,7 @@ final class FuturePreparedStatement implements Future {
      * @throws Exception\InvalidArgumentException
      * @throws Exception\TimeoutException
      *
-     * @return \Cassandra\PreparedStatement A prepared statement
+     * @return PreparedStatement A prepared statement
      */
     public function get($timeout) { }
 

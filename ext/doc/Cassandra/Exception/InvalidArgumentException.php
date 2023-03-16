@@ -21,7 +21,7 @@ namespace Cassandra\Exception;
 /**
  * Cassandra invalid argument exception.
  */
-class InvalidArgumentException extends \InvalidArgumentException implements \Cassandra\Exception {
+class InvalidArgumentException extends \InvalidArgumentException implements Exception {
 
     /**
      * @param mixed $message

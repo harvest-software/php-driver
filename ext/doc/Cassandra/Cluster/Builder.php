@@ -28,7 +28,7 @@ final class Builder {
     /**
      * Returns a Cluster Instance.
      *
-     * @return \Cassandra\Cluster Cluster instance
+     * @return \Cluster Cluster instance
      */
     public function build() { }
 
@@ -37,7 +37,7 @@ final class Builder {
      *
      * @param int $consistency A consistency level, must be one of Cassandra::CONSISTENCY_* values
      *
-     * @return \Cassandra\Cluster\Builder self
+     * @return Builder self
      */
     public function withDefaultConsistency($consistency) { }
 
@@ -47,7 +47,7 @@ final class Builder {
      *
      * @param int|null $pageSize default page size
      *
-     * @return \Cassandra\Cluster\Builder self
+     * @return Builder self
      */
     public function withDefaultPageSize($pageSize) { }
 
@@ -57,7 +57,7 @@ final class Builder {
      *
      * @param float|null $timeout Timeout value in seconds, can be fractional
      *
-     * @return \Cassandra\Cluster\Builder self
+     * @return Builder self
      */
     public function withDefaultTimeout($timeout) { }
 
@@ -67,7 +67,7 @@ final class Builder {
      *
      * @param string $host ,... one or more ip addresses or hostnames
      *
-     * @return \Cassandra\Cluster\Builder self
+     * @return Builder self
      */
     public function withContactPoints($host) { }
 
@@ -78,14 +78,14 @@ final class Builder {
      *
      * @throws \Exception\InvalidArgumentException
      *
-     * @return \Cassandra\Cluster\Builder self
+     * @return Builder self
      */
     public function withPort($port) { }
 
     /**
      * Configures this cluster to use a round robin load balancing policy.
      *
-     * @return \Cassandra\Cluster\Builder self
+     * @return Builder self
      */
     public function withRoundRobinLoadBalancingPolicy() { }
 
@@ -96,7 +96,7 @@ final class Builder {
      * @param int $hostPerRemoteDatacenter Maximum number of hosts to try in remote datacenters
      * @param bool $useRemoteDatacenterForLocalConsistencies Allow using hosts from remote datacenters to execute statements with local consistencies
      *
-     * @return \Cassandra\Cluster\Builder self
+     * @return Builder self
      */
     public function withDatacenterAwareRoundRobinLoadBalancingPolicy($localDatacenter, $hostPerRemoteDatacenter, $useRemoteDatacenterForLocalConsistencies) { }
 
@@ -107,7 +107,7 @@ final class Builder {
      *
      * @param string $hosts A comma delimited list of addresses.
      *
-     * @return \Cassandra\Cluster\Builder self
+     * @return Builder self
      */
     public function withBlackListHosts($hosts) { }
 
@@ -118,7 +118,7 @@ final class Builder {
      *
      * @param string $hosts A comma delimited list of addresses.
      *
-     * @return \Cassandra\Cluster\Builder self
+     * @return Builder self
      */
     public function withWhiteListHosts($hosts) { }
 
@@ -130,7 +130,7 @@ final class Builder {
      *
      * @param string $dcs A comma delimited list of datacenters.
      *
-     * @return \Cassandra\Cluster\Builder self
+     * @return Builder self
      */
     public function withBlackListDCs($dcs) { }
 
@@ -141,7 +141,7 @@ final class Builder {
      *
      * @param string $dcs A comma delimited list of datacenters.
      *
-     * @return \Cassandra\Cluster\Builder self
+     * @return Builder self
      */
     public function withWhiteListDCs($dcs) { }
 
@@ -150,7 +150,7 @@ final class Builder {
      *
      * @param bool $enabled Whether to enable token aware routing (optional)
      *
-     * @return \Cassandra\Cluster\Builder self
+     * @return Builder self
      */
     public function withTokenAwareRouting($enabled) { }
 
@@ -160,7 +160,7 @@ final class Builder {
      * @param string $username Username
      * @param string $password Password
      *
-     * @return \Cassandra\Cluster\Builder self
+     * @return Builder self
      */
     public function withCredentials($username, $password) { }
 
@@ -169,7 +169,7 @@ final class Builder {
      *
      * @param float $timeout Timeout value in seconds, can be fractional
      *
-     * @return \Cassandra\Cluster\Builder self
+     * @return Builder self
      */
     public function withConnectTimeout($timeout) { }
 
@@ -178,16 +178,16 @@ final class Builder {
      *
      * @param float $timeout Timeout value in seconds, can be fractional
      *
-     * @return \Cassandra\Cluster\Builder self
+     * @return Builder self
      */
     public function withRequestTimeout($timeout) { }
 
     /**
      * Set up ssl context.
      *
-     * @param \Cassandra\SSLOptions $options a preconfigured ssl context
+     * @param SSLOptions $options a preconfigured ssl context
      *
-     * @return \Cassandra\Cluster\Builder self
+     * @return Builder self
      */
     public function withSSL($options) { }
 
@@ -196,7 +196,7 @@ final class Builder {
      *
      * @param bool $enabled whether to enable persistent sessions and clusters
      *
-     * @return \Cassandra\Cluster\Builder self
+     * @return Builder self
      */
     public function withPersistentSessions($enabled) { }
 
@@ -212,7 +212,7 @@ final class Builder {
      *
      * @param int $version The protocol version
      *
-     * @return \Cassandra\Cluster\Builder self
+     * @return Builder self
      */
     public function withProtocolVersion($version) { }
 
@@ -224,7 +224,7 @@ final class Builder {
      *
      * @param int $count total number of threads.
      *
-     * @return \Cassandra\Cluster\Builder self
+     * @return Builder self
      */
     public function withIOThreads($count) { }
 
@@ -239,7 +239,7 @@ final class Builder {
      * @param int $core minimum connections to keep open to any given host
      * @param int $max maximum connections to keep open to any given host
      *
-     * @return \Cassandra\Cluster\Builder self
+     * @return Builder self
      */
     public function withConnectionsPerHost($core, $max) { }
 
@@ -249,7 +249,7 @@ final class Builder {
      *
      * @param float $interval interval in seconds
      *
-     * @return \Cassandra\Cluster\Builder self
+     * @return Builder self
      */
     public function withReconnectInterval($interval) { }
 
@@ -258,7 +258,7 @@ final class Builder {
      *
      * @param bool $enabled whether to actually enable or disable the routing.
      *
-     * @return \Cassandra\Cluster\Builder self
+     * @return Builder self
      */
     public function withLatencyAwareRouting($enabled) { }
 
@@ -267,7 +267,7 @@ final class Builder {
      *
      * @param bool $enabled whether to actually enable or disable nodelay.
      *
-     * @return \Cassandra\Cluster\Builder self
+     * @return Builder self
      */
     public function withTCPNodelay($enabled) { }
 
@@ -279,26 +279,26 @@ final class Builder {
      *                          the connection. If set to `null`, disables
      *                          keepalive probing.
      *
-     * @return \Cassandra\Cluster\Builder self
+     * @return Builder self
      */
     public function withTCPKeepalive($delay) { }
 
     /**
      * Configures the retry policy.
      *
-     * @param \Cassandra\RetryPolicy $policy the retry policy to use.
+     * @param Cluster\RetryPolicy $policy the retry policy to use.
      *
-     * @return \Cassandra\Cluster\Builder self
+     * @return Builder self
      */
     public function withRetryPolicy($policy) { }
 
     /**
      * Sets the timestamp generator.
      *
-     * @param \Cassandra\TimestampGenerator $generator A timestamp generator that will be used
-     *                                                 to generate timestamps for statements.
+     * @param TimestampGenerator $generator A timestamp generator that will be used
+     *                                      to generate timestamps for statements.
      *
-     * @return \Cassandra\Cluster\Builder self
+     * @return Builder self
      */
     public function withTimestampGenerator($generator) { }
 
@@ -312,7 +312,7 @@ final class Builder {
      *
      * @param bool $enabled whether the driver fetches and maintains schema metadata.
      *
-     * @return \Cassandra\Cluster\Builder self
+     * @return Builder self
      */
     public function withSchemaMetadata($enabled) { }
 
@@ -323,13 +323,9 @@ final class Builder {
      * reverse IP lookup. This is useful for authentication (Kerberos) or
      * encryption SSL services that require a valid hostname for verification.
      *
-     * Important: It's possible that the underlying C/C++ driver does not
-     * support hostname resolution. A PHP warning will be emitted if the driver
-     * does not support hostname resolution.
-     *
      * @param bool $enabled whether the driver uses hostname resolution.
      *
-     * @return \Cassandra\Cluster\Builder self
+     * @return Builder self
      */
     public function withHostnameResolution($enabled) { }
 
@@ -344,7 +340,7 @@ final class Builder {
      *
      * @param bool $enabled whether the driver uses randomized contact points.
      *
-     * @return \Cassandra\Cluster\Builder self
+     * @return Builder self
      */
     public function withRandomizedContactPoints($enabled) { }
 
@@ -356,7 +352,7 @@ final class Builder {
      *
      * @param float $interval interval in seconds (0 to disable heartbeat).
      *
-     * @return \Cassandra\Cluster\Builder self
+     * @return Builder self
      */
     public function withConnectionHeartbeatInterval($interval) { }
 

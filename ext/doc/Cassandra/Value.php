@@ -45,7 +45,7 @@ interface Value {
     /**
      * The type of represented by the value.
      *
-     * @return \Cassandra\Type
+     * @return Type
      */
     public function type();
 

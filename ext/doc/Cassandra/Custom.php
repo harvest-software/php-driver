@@ -26,7 +26,7 @@ abstract class Custom implements Value {
     /**
      * The type of this value.
      *
-     * @return \Cassandra\Type\Custom
+     * @return Type\Custom
      */
     public abstract function type();
 

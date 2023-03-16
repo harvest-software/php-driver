@@ -22,7 +22,7 @@ namespace Cassandra\Type;
  * A class that represents the map type. The map type contains two types that
  * represents the types of the key and value contained in the map.
  */
-final class Map extends \Cassandra\Type {
+final class Map extends Type {
 
     private function __construct() { }
 
@@ -36,14 +36,14 @@ final class Map extends \Cassandra\Type {
     /**
      * Returns type of keys
      *
-     * @return \Cassandra\Type Type of keys
+     * @return Type Type of keys
      */
     public function keyType() { }
 
     /**
      * Returns type of values
      *
-     * @return \Cassandra\Type Type of values
+     * @return Type Type of values
      */
     public function valueType() { }
 
@@ -81,7 +81,7 @@ final class Map extends \Cassandra\Type {
      *                                            of a different type than what
      *                                            this map type expects.
      *
-     * @return \Cassandra\Map A set with given values.
+     * @return Map A set with given values.
      */
     public function create($value) { }
 

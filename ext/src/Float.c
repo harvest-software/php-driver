@@ -346,9 +346,16 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_num, 0, ZEND_RETURN_VALUE, 1)
   ZEND_ARG_INFO(0, num)
 ZEND_END_ARG_INFO()
 
+#if PHP_VERSION_ID >= 80200
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_tostring, 0, 0, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+#else
+#define arginfo_tostring arginfo_none
+#endif
+
 static zend_function_entry php_driver_float_methods[] = {
   PHP_ME(Float, __construct, arginfo__construct, ZEND_ACC_CTOR|ZEND_ACC_PUBLIC)
-  PHP_ME(Float, __toString, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(Float, __toString, arginfo_tostring, ZEND_ACC_PUBLIC)
   PHP_ME(Float, type, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Float, value, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Float, isInfinite, arginfo_none, ZEND_ACC_PUBLIC)
@@ -372,7 +379,14 @@ static zend_function_entry php_driver_float_methods[] = {
 static php_driver_value_handlers php_driver_float_handlers;
 
 static HashTable *
-php_driver_float_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
+php_driver_float_gc(
+#if PHP_MAJOR_VERSION >= 8
+        zend_object *object,
+#else
+        zval *object,
+#endif
+        php5to7_zval_gc table, int *n TSRMLS_DC
+)
 {
   *table = NULL;
   *n = 0;
@@ -380,12 +394,22 @@ php_driver_float_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
 }
 
 static HashTable *
-php_driver_float_properties(zval *object TSRMLS_DC)
+php_driver_float_properties(
+#if PHP_MAJOR_VERSION >= 8
+        zend_object *object
+#else
+        zval *object TSRMLS_DC
+#endif
+)
 {
   php5to7_zval type;
   php5to7_zval value;
 
+#if PHP_MAJOR_VERSION >= 8
+  php_driver_numeric *self = PHP5TO7_ZEND_OBJECT_GET(numeric, object);
+#else
   php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(object);
+#endif
   HashTable         *props = zend_std_get_properties(object TSRMLS_CC);
 
   type = php_driver_type_scalar(CASS_VALUE_TYPE_FLOAT TSRMLS_CC);
@@ -409,6 +433,9 @@ float_to_bits(cass_float_t value) {
 static int
 php_driver_float_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
+#if PHP_MAJOR_VERSION >= 8
+  ZEND_COMPARE_OBJECTS_FALLBACK(obj1, obj2);
+#endif
   cass_int32_t bits1, bits2;
   php_driver_numeric *flt1 = NULL;
   php_driver_numeric *flt2 = NULL;
@@ -437,9 +464,20 @@ php_driver_float_hash_value(zval *obj TSRMLS_DC)
 }
 
 static int
-php_driver_float_cast(zval *object, zval *retval, int type TSRMLS_DC)
+php_driver_float_cast(
+#if PHP_MAJOR_VERSION >= 8
+        zend_object *object,
+#else
+        zval *object,
+#endif
+        zval *retval, int type TSRMLS_DC
+)
 {
+#if PHP_MAJOR_VERSION >= 8
+  php_driver_numeric *self = PHP5TO7_ZEND_OBJECT_GET(numeric, object);
+#else
   php_driver_numeric *self = PHP_DRIVER_GET_NUMERIC(object);
+#endif
 
   switch (type) {
   case IS_LONG:
@@ -490,7 +528,11 @@ void php_driver_define_Float(TSRMLS_D)
 #if PHP_VERSION_ID >= 50400
   php_driver_float_handlers.std.get_gc          = php_driver_float_gc;
 #endif
+#if PHP_MAJOR_VERSION >= 8
+  php_driver_float_handlers.std.compare = php_driver_float_compare;
+#else
   php_driver_float_handlers.std.compare_objects = php_driver_float_compare;
+#endif
   php_driver_float_handlers.std.cast_object     = php_driver_float_cast;
 
   php_driver_float_handlers.hash_value = php_driver_float_hash_value;

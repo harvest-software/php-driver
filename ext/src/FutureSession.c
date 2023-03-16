@@ -95,7 +95,13 @@ static zend_function_entry php_driver_future_session_methods[] = {
 static zend_object_handlers php_driver_future_session_handlers;
 
 static HashTable *
-php_driver_future_session_properties(zval *object TSRMLS_DC)
+php_driver_future_session_properties(
+#if PHP_MAJOR_VERSION >= 8
+        zend_object *object
+#else
+        zval *object TSRMLS_DC
+#endif
+)
 {
   HashTable *props = zend_std_get_properties(object TSRMLS_CC);
 
@@ -105,6 +111,9 @@ php_driver_future_session_properties(zval *object TSRMLS_DC)
 static int
 php_driver_future_session_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
+#if PHP_MAJOR_VERSION >= 8
+  ZEND_COMPARE_OBJECTS_FALLBACK(obj1, obj2);
+#endif
   if (Z_OBJCE_P(obj1) != Z_OBJCE_P(obj2))
     return 1; /* different classes */
 
@@ -166,6 +175,10 @@ void php_driver_define_FutureSession(TSRMLS_D)
 
   memcpy(&php_driver_future_session_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   php_driver_future_session_handlers.get_properties  = php_driver_future_session_properties;
+#if PHP_MAJOR_VERSION >= 8
+  php_driver_future_session_handlers.compare = php_driver_future_session_compare;
+#else
   php_driver_future_session_handlers.compare_objects = php_driver_future_session_compare;
+#endif
   php_driver_future_session_handlers.clone_obj = NULL;
 }

@@ -40,7 +40,7 @@ final class Timeuuid implements Value, UuidInterface {
     /**
      * The type of this timeuuid.
      *
-     * @return \Cassandra\Type
+     * @return Type
      */
     public function type() { }
 

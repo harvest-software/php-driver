@@ -28,7 +28,7 @@ interface Cluster {
      *
      * @param string $keyspace Optional keyspace name
      *
-     * @return \Cassandra\Session Session instance
+     * @return Session Session instance
      */
     public function connect($keyspace);
 
@@ -37,7 +37,7 @@ interface Cluster {
      *
      * @param string $keyspace Optional keyspace name
      *
-     * @return \Cassandra\Future A Future Session instance
+     * @return Future A Future Session instance
      */
     public function connectAsync($keyspace);
 

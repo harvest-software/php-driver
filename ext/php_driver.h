@@ -46,6 +46,21 @@ typedef int pid_t;
 #  error PHP 5.6.0 or later is required in order to build the driver
 #endif
 
+#if PHP_MAJOR_VERSION >= 8
+  #ifndef TSRMLS_D
+  #define TSRMLS_D void
+  #define TSRMLS_DC
+  #define TSRMLS_C
+  #define TSRMLS_CC
+  #define TSRMLS_FETCH()
+  #endif
+#endif
+
+#ifndef ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX
+#define ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(name, return_reference, required_num_args, type, allow_null) \
+        ZEND_BEGIN_ARG_INFO_EX(name, 0, return_reference, required_num_args)
+#endif
+
 #include <ext/spl/spl_iterators.h>
 #include <ext/spl/spl_exceptions.h>
 
@@ -117,9 +132,6 @@ typedef zend_object php5to7_zend_object_free;
 typedef zval **php5to7_zval_gc;
 typedef zval *php5to7_dtor;
 typedef size_t php5to7_size;
-#if ((PHP_MAJOR_VERSION == 7 && PHP_MINOR_VERSION >= 4) || PHP_MAJOR_VERSION > 7)
-  typedef unsigned long ulong;
-#endif
 
 static inline int
 php5to7_string_compare(php5to7_string s1, php5to7_string s2)
@@ -175,6 +187,19 @@ php5to7_string_compare(php5to7_string s1, php5to7_string s2)
 #define PHP5TO7_ZEND_HASH_FOREACH_NUM_KEY_VAL(ht, _h, _val) \
   ZEND_HASH_FOREACH_NUM_KEY_VAL(ht, _h, _val)
 
+#if PHP_VERSION_ID >= 80200
+
+#define PHP5TO7_ZEND_HASH_FOREACH_STR_KEY_VAL(ht, _key, _val) \
+  ZEND_HASH_FOREACH(ht, 0);                                   \
+  if (__key) {                                                \
+    (_key) = ZSTR_VAL(__key);                                 \
+  }  else {                                                   \
+    (_key) = NULL;                                            \
+  }                                                           \
+  _val = _z;
+
+#else
+
 #define PHP5TO7_ZEND_HASH_FOREACH_STR_KEY_VAL(ht, _key, _val) \
   ZEND_HASH_FOREACH(ht, 0);                                   \
   if (_p->key) {                                              \
@@ -183,6 +208,8 @@ php5to7_string_compare(php5to7_string s1, php5to7_string s2)
     (_key) = NULL;                                            \
   }                                                           \
   _val = _z;
+
+#endif
 
 #define PHP5TO7_ZEND_HASH_FOREACH_END(ht) ZEND_HASH_FOREACH_END()
 
@@ -458,8 +485,6 @@ php5to7_string_compare(php5to7_string s1, php5to7_string s2)
 #endif /* PHP_MAJOR_VERSION >= 7 */
 
 extern zend_module_entry php_driver_module_entry;
-
-#define phpext_cassandra_ptr &php_driver_module_entry
 
 PHP_MINIT_FUNCTION(php_driver);
 PHP_MSHUTDOWN_FUNCTION(php_driver);

@@ -40,7 +40,7 @@ final class Bigint implements Value, Numeric {
     /**
      * The type of this bigint.
      *
-     * @return \Cassandra\Type
+     * @return Type
      */
     public function type() { }
 
@@ -52,47 +52,47 @@ final class Bigint implements Value, Numeric {
     public function value() { }
 
     /**
-     * @param \Cassandra\Numeric $num a number to add to this one
-     * @return \Cassandra\Numeric sum
+     * @param Numeric $num a number to add to this one
+     * @return Numeric sum
      */
     public function add($num) { }
 
     /**
-     * @param \Cassandra\Numeric $num a number to subtract from this one
-     * @return \Cassandra\Numeric difference
+     * @param Numeric $num a number to subtract from this one
+     * @return Numeric difference
      */
     public function sub($num) { }
 
     /**
-     * @param \Cassandra\Numeric $num a number to multiply this one by
-     * @return \Cassandra\Numeric product
+     * @param Numeric $num a number to multiply this one by
+     * @return Numeric product
      */
     public function mul($num) { }
 
     /**
-     * @param \Cassandra\Numeric $num a number to divide this one by
-     * @return \Cassandra\Numeric quotient
+     * @param Numeric $num a number to divide this one by
+     * @return Numeric quotient
      */
     public function div($num) { }
 
     /**
-     * @param \Cassandra\Numeric $num a number to divide this one by
-     * @return \Cassandra\Numeric remainder
+     * @param Numeric $num a number to divide this one by
+     * @return Numeric remainder
      */
     public function mod($num) { }
 
     /**
-     * @return \Cassandra\Numeric absolute value
+     * @return Numeric absolute value
      */
     public function abs() { }
 
     /**
-     * @return \Cassandra\Numeric negative value
+     * @return Numeric negative value
      */
     public function neg() { }
 
     /**
-     * @return \Cassandra\Numeric square root
+     * @return Numeric square root
      */
     public function sqrt() { }
 
@@ -109,14 +109,14 @@ final class Bigint implements Value, Numeric {
     /**
      * Minimum possible Bigint value
      *
-     * @return \Cassandra\Bigint minimum value
+     * @return Bigint minimum value
      */
     public static function min() { }
 
     /**
      * Maximum possible Bigint value
      *
-     * @return \Cassandra\Bigint maximum value
+     * @return Bigint maximum value
      */
     public static function max() { }
 

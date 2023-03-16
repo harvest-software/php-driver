@@ -283,6 +283,12 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_value, 0, ZEND_RETURN_VALUE, 1)
   ZEND_ARG_INFO(0, value)
 ZEND_END_ARG_INFO()
 
+#if PHP_MAJOR_VERSION >= 8
+ZEND_BEGIN_ARG_INFO_EX(arginfo_values, 0, ZEND_RETURN_VALUE, 1)
+  ZEND_ARG_VARIADIC_INFO(0, value)
+ZEND_END_ARG_INFO()
+#endif
+
 ZEND_BEGIN_ARG_INFO_EX(arginfo_index, 0, ZEND_RETURN_VALUE, 1)
   ZEND_ARG_INFO(0, index)
 ZEND_END_ARG_INFO()
@@ -290,21 +296,43 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_INFO_EX(arginfo_none, 0, ZEND_RETURN_VALUE, 0)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(arginfo_current, 0, 0, IS_MIXED, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(arginfo_key, 0, 0, IS_MIXED, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(arginfo_next, 0, 0, IS_VOID, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(arginfo_rewind, 0, 0, IS_VOID, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(arginfo_valid, 0, 0, _IS_BOOL, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_TENTATIVE_RETURN_TYPE_INFO_EX(arginfo_count, 0, 0, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
 static zend_function_entry php_driver_collection_methods[] = {
   PHP_ME(Collection, __construct, arginfo__construct, ZEND_ACC_CTOR|ZEND_ACC_PUBLIC)
   PHP_ME(Collection, type, arginfo_none, ZEND_ACC_PUBLIC)
   PHP_ME(Collection, values, arginfo_none, ZEND_ACC_PUBLIC)
+#if PHP_MAJOR_VERSION >= 8
+  PHP_ME(Collection, add, arginfo_values, ZEND_ACC_PUBLIC)
+#else
   PHP_ME(Collection, add, arginfo_value, ZEND_ACC_PUBLIC)
+#endif
   PHP_ME(Collection, get, arginfo_index, ZEND_ACC_PUBLIC)
   PHP_ME(Collection, find, arginfo_value, ZEND_ACC_PUBLIC)
   /* Countable */
-  PHP_ME(Collection, count, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(Collection, count, arginfo_count, ZEND_ACC_PUBLIC)
   /* Iterator */
-  PHP_ME(Collection, current, arginfo_none, ZEND_ACC_PUBLIC)
-  PHP_ME(Collection, key, arginfo_none, ZEND_ACC_PUBLIC)
-  PHP_ME(Collection, next, arginfo_none, ZEND_ACC_PUBLIC)
-  PHP_ME(Collection, valid, arginfo_none, ZEND_ACC_PUBLIC)
-  PHP_ME(Collection, rewind, arginfo_none, ZEND_ACC_PUBLIC)
+  PHP_ME(Collection, current, arginfo_current, ZEND_ACC_PUBLIC)
+  PHP_ME(Collection, key, arginfo_key, ZEND_ACC_PUBLIC)
+  PHP_ME(Collection, next, arginfo_next, ZEND_ACC_PUBLIC)
+  PHP_ME(Collection, valid, arginfo_valid, ZEND_ACC_PUBLIC)
+  PHP_ME(Collection, rewind, arginfo_rewind, ZEND_ACC_PUBLIC)
   PHP_ME(Collection, remove, arginfo_index, ZEND_ACC_PUBLIC)
   PHP_FE_END
 };
@@ -312,7 +340,13 @@ static zend_function_entry php_driver_collection_methods[] = {
 static php_driver_value_handlers php_driver_collection_handlers;
 
 static HashTable *
-php_driver_collection_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
+php_driver_collection_gc(
+#if PHP_MAJOR_VERSION >= 8
+        zend_object *object,
+#else
+        zval *object,
+#endif
+        php5to7_zval_gc table, int *n TSRMLS_DC)
 {
   *table = NULL;
   *n = 0;
@@ -320,11 +354,21 @@ php_driver_collection_gc(zval *object, php5to7_zval_gc table, int *n TSRMLS_DC)
 }
 
 static HashTable *
-php_driver_collection_properties(zval *object TSRMLS_DC)
+php_driver_collection_properties(
+#if PHP_MAJOR_VERSION >= 8
+        zend_object *object
+#else
+        zval *object TSRMLS_DC
+#endif
+)
 {
   php5to7_zval values;
 
+#if PHP_MAJOR_VERSION >= 8
+  php_driver_collection  *self = PHP5TO7_ZEND_OBJECT_GET(collection, object);
+#else
   php_driver_collection  *self = PHP_DRIVER_GET_COLLECTION(object);
+#endif
   HashTable             *props = zend_std_get_properties(object TSRMLS_CC);
 
   PHP5TO7_ZEND_HASH_UPDATE(props,
@@ -343,6 +387,9 @@ php_driver_collection_properties(zval *object TSRMLS_DC)
 static int
 php_driver_collection_compare(zval *obj1, zval *obj2 TSRMLS_DC)
 {
+#if PHP_MAJOR_VERSION >= 8
+  ZEND_COMPARE_OBJECTS_FALLBACK(obj1, obj2);
+#endif
   HashPosition pos1;
   HashPosition pos2;
   php5to7_zval *current1;
@@ -442,10 +489,18 @@ void php_driver_define_Collection(TSRMLS_D)
 #if PHP_VERSION_ID >= 50400
   php_driver_collection_handlers.std.get_gc          = php_driver_collection_gc;
 #endif
+#if PHP_MAJOR_VERSION >= 8
+  php_driver_collection_handlers.std.compare = php_driver_collection_compare;
+#else
   php_driver_collection_handlers.std.compare_objects = php_driver_collection_compare;
+#endif
   php_driver_collection_ce->ce_flags |= PHP5TO7_ZEND_ACC_FINAL;
   php_driver_collection_ce->create_object = php_driver_collection_new;
+#if PHP_VERSION_ID < 80100
   zend_class_implements(php_driver_collection_ce TSRMLS_CC, 2, spl_ce_Countable, zend_ce_iterator);
+#else
+  zend_class_implements(php_driver_collection_ce TSRMLS_CC, 2, zend_ce_countable, zend_ce_iterator);
+#endif
 
   php_driver_collection_handlers.hash_value = php_driver_collection_hash_value;
   php_driver_collection_handlers.std.clone_obj = NULL;
