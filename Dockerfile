@@ -34,7 +34,8 @@ RUN set -eux; \
       apt-transport-s3 \
       gnupg-agent \
       ca-certificates \
-      gnupg ;
+      gnupg \
+      libdistro-info-perl ;
 
 # Connect to our repo
 ARG AWS_DEFAULT_REGION
