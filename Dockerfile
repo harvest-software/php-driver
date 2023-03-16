@@ -21,7 +21,8 @@ RUN set -eux; \
       gnupg-agent \
       ca-certificates \
       curl \
-      gnupg ;
+      gnupg \
+      lsb-release ;
 
 # Connect to our repo
 ARG AWS_DEFAULT_REGION
