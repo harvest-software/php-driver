@@ -6,8 +6,22 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN set -eux; \
     apt-get update; \
     apt-get install -y --no-install-recommends \
-      cmake \
+      tzdata \
+      g++ \
+      build-essential \
+      make \
+      gpg-agent \
+      software-properties-common \
       git \
+      curl \
+      wget \
+      unzip ;
+
+# Additional dependencies
+RUN set -eux; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends \
+      cmake \
       libuv1-dev \
       devscripts \
       debhelper \
@@ -20,9 +34,7 @@ RUN set -eux; \
       apt-transport-s3 \
       gnupg-agent \
       ca-certificates \
-      curl \
-      gnupg \
-      lsb-release ;
+      gnupg ;
 
 # Connect to our repo
 ARG AWS_DEFAULT_REGION

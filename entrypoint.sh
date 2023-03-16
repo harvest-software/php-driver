@@ -4,7 +4,7 @@
 cd /php-driver/ext
 phpize
 cd ../
-mkdir build && cd build
+mkdir -p build && cd build
 ../ext/configure
 make
 
